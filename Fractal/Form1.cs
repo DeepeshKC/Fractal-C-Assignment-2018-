@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,10 +14,21 @@ namespace Fractal
     public partial class Form1 : Form
     {
         private int MAX = 256;      // max iterations
-        private double SX = -2.025; // start value real
-        private double SY = -1.125; // start value imaginary
-        private double EX = 0.6;    // end value real
-        private double EY = 1.125;  // end value imaginary
+        //private double SX = -2.025; // start value real
+        //private double SY = -1.125; // start value imaginary
+        //private double EX = 0.6;    // end value real
+        //private double EY = 1.125;  // end value imaginary
+
+        //private double SX = 0.144871807893117; // start value real
+        //private double SY = 0.887820512820513; // start value imaginary
+        //private double EX = 0.000617283932956649;    // end value real
+        //private double EY = 0.000620936518372416;
+
+        private double SX = 0; // start value real
+        private double SY = 0; // start value imaginary
+        private double EX = 0;    // end value real
+        private double EY = 0;
+
         private static int x1, y1, xs, ys, xe, ye;
         private static double xstart, ystart, xende, yende, xzoom, yzoom;
         private static float xy;
@@ -26,7 +38,7 @@ namespace Fractal
         private Pen pen;
         private bool isClicked;
 
-       
+
 
         private static bool action, rectangle, finished;
 
@@ -35,6 +47,8 @@ namespace Fractal
             InitializeComponent();
             init();
             start();
+
+
 
         }
 
@@ -48,7 +62,36 @@ namespace Fractal
             g1 = Graphics.FromImage(picture);
             finished = true;
             isClicked = false;
+
+            string path = Directory.GetCurrentDirectory();
+
+            List<double> l = null;
+
+
+            try
+            {
+                StreamReader sr = new StreamReader(path + "/values.txt");
+                l = new List<double>();
+
+                double a = 0;
+                while ((a = Convert.ToDouble(sr.ReadLine())) != 0)
+
+                    l.Add(a);
+            }
+
+            catch (Exception ex)
+            {
+
+                Console.WriteLine("Exception" + ex);
+            }
+
+            SX = l[0]; 
+            SY = l[1];
+            EX = l[2];
+            EY = l[3]; 
+
         }
+
         public void start()
         {
             action = false;
@@ -57,6 +100,7 @@ namespace Fractal
             xzoom = (xende - xstart) / (double)x1;
             yzoom = (yende - ystart) / (double)y1;
             mandelbrot();
+
 
         }
         private void pictureBox1_Paint_1(object sender, PaintEventArgs e)
@@ -74,8 +118,8 @@ namespace Fractal
 
             action = false;
             //Dispalying message in text box before mandelbrot is ready
-           // info.Text = "Mandelbrot-Set will be produced - please wait...";
-            ///info.Enabled = false;
+            textBox1.Text = "Mandelbrot-Set will be produced - please wait...";
+           textBox1.Enabled = false;
             for (x = 0; x < x1; x += 2)
             {
                 for (y = 0; y < y1; y++)
@@ -101,8 +145,8 @@ namespace Fractal
             }
             //Displaying message after mandlebrot is ready
             Cursor.Current = Cursors.Cross;
-           // info.Text = "Mandelbrot-Set ready - please select zoom area with pressed mouse.";
-           // info.Enabled = false;
+           textBox1.Text = "Mandelbrot-Set ready - please select zoom area with pressed mouse.";
+            textBox1.Enabled = false;
 
             action = true;
         }
@@ -160,6 +204,22 @@ namespace Fractal
                     else g.DrawRectangle(mypen, xe, ye, (xs - xe), (ys - ye));
                 }
             }
+
+            try
+            {
+                StreamWriter sx = new StreamWriter("values.txt");
+                sx.WriteLine(xstart);
+                sx.WriteLine(ystart);
+                sx.WriteLine(xende);
+                sx.WriteLine(yende);
+                
+                sx.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.Write("Exception" + ex);
+            }
+
         }
             private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -223,7 +283,8 @@ namespace Fractal
 
                 update();
                 isClicked = false;
-            }
+                
+                }
         }
     }
         }
