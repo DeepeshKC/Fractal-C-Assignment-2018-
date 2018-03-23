@@ -13,21 +13,19 @@ namespace Fractal
 {
     public partial class Form1 : Form
     {
+        private bool isFirstRun = true;
+
+        //private int MAX = 256;      // max iterations
+        //private double SX = 0; // start value real
+        //private double SY = 0; // start value imaginary
+        //private double EX = 0;    // end value real
+        //private double EY = 0;
+
         private int MAX = 256;      // max iterations
-        //private double SX = -2.025; // start value real
-        //private double SY = -1.125; // start value imaginary
-        //private double EX = 0.6;    // end value real
-        //private double EY = 1.125;  // end value imaginary
-
-        //private double SX = 0.144871807893117; // start value real
-        //private double SY = 0.887820512820513; // start value imaginary
-        //private double EX = 0.000617283932956649;    // end value real
-        //private double EY = 0.000620936518372416;
-
-        private double SX = 0; // start value real
-        private double SY = 0; // start value imaginary
-        private double EX = 0;    // end value real
-        private double EY = 0;
+        private double SX = -2.025; // start value real
+        private double SY = -1.125; // start value imaginary
+        private double EX = 0.6;    // end value real
+        private double EY = 1.125;  // end value imaginary
 
         private static int x1, y1, xs, ys, xe, ye;
         private static double xstart, ystart, xende, yende, xzoom, yzoom;
@@ -37,9 +35,6 @@ namespace Fractal
         private HSB HSBcol = new HSB();
         private Pen pen;
         private bool isClicked;
-
-
-
         private static bool action, rectangle, finished;
 
         public Form1()
@@ -47,9 +42,6 @@ namespace Fractal
             InitializeComponent();
             init();
             start();
-
-
-
         }
 
         public void init()
@@ -62,34 +54,6 @@ namespace Fractal
             g1 = Graphics.FromImage(picture);
             finished = true;
             isClicked = false;
-
-            string path = Directory.GetCurrentDirectory();
-
-            List<double> l = null;
-
-
-            try
-            {
-                StreamReader sr = new StreamReader(path + "/values.txt");
-                l = new List<double>();
-
-                double a = 0;
-                while ((a = Convert.ToDouble(sr.ReadLine())) != 0)
-
-                    l.Add(a);
-            }
-
-            catch (Exception ex)
-            {
-
-                Console.WriteLine("Exception" + ex);
-            }
-
-            SX = l[0]; 
-            SY = l[1];
-            EX = l[2];
-            EY = l[3]; 
-
         }
 
         public void start()
@@ -168,13 +132,57 @@ namespace Fractal
 
         private void initvalues() // reset start values
         {
-            xstart = SX;
-            ystart = SY;
-            xende = EX;
-            yende = EY;
-            if ((float)((xende - xstart) / (yende - ystart)) != xy)
-                xstart = xende - (yende - ystart) * (double)xy;
+            string path = Directory.GetCurrentDirectory();
+
+            List<double> l = null;
+            if (isFirstRun)
+            {
+                try
+                {
+                    StreamReader sr = new StreamReader("values.txt");
+                    Console.WriteLine((sr == null) + " ");
+                    l = new List<double>();
+
+                    double a = 0;
+                    while ((a = Convert.ToDouble(sr.ReadLine())) != 0)
+
+                        l.Add(a);
+                }
+
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine("Exception" + ex);
+                }
+
+                try
+                {
+                    xstart = l[0];
+                    ystart = l[1];
+                    xende = l[2];
+                    yende = l[3];
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Console.WriteLine("Exception" + ex);
+                }
+                isFirstRun = false;
+            }
+            else
+            {
+                Console.WriteLine("DOesn't work!");
+                xstart = SX;
+                ystart = SY;
+                xende = EX;
+                yende = EY;
+
+
+
+                if ((float)((xende - xstart) / (yende - ystart)) != xy)
+                    xstart = xende - (yende - ystart) * (double)xy;
+            }
         }
+        
         public void destroy() // delete all instances 
         {
             if (finished)
@@ -204,22 +212,6 @@ namespace Fractal
                     else g.DrawRectangle(mypen, xe, ye, (xs - xe), (ys - ye));
                 }
             }
-
-            try
-            {
-                StreamWriter sx = new StreamWriter("values.txt");
-                sx.WriteLine(xstart);
-                sx.WriteLine(ystart);
-                sx.WriteLine(xende);
-                sx.WriteLine(yende);
-                
-                sx.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.Write("Exception" + ex);
-            }
-
         }
             private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -239,7 +231,6 @@ namespace Fractal
                     xe = e.X;
                     ye = e.Y;
                     rectangle = true;
-
                     update();
                 }  
             }
@@ -278,13 +269,32 @@ namespace Fractal
                 }
                 xzoom = (xende - xstart) / (double)x1;
                 yzoom = (yende - ystart) / (double)y1;
-                mandelbrot();
-                rectangle = false;
 
-                update();
-                isClicked = false;
+                mandelbrot();
                 
-                }
+                rectangle = false;
+                isClicked = false;
+                update();
+               
+               
+            }
+
+            try
+            {
+                StreamWriter sx = new StreamWriter("values.txt");
+                sx.WriteLine(xstart);
+                sx.WriteLine(ystart);
+                sx.WriteLine(xende);
+                sx.WriteLine(yende);
+                sx.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Console.Write("Exception" + ex);
+            }
+
+
         }
     }
         }

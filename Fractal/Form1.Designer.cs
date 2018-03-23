@@ -38,9 +38,9 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(23, 36);
+            this.pictureBox1.Location = new System.Drawing.Point(0, 27);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(675, 351);
+            this.pictureBox1.Size = new System.Drawing.Size(736, 369);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint_1);
@@ -66,9 +66,9 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 402);
+            this.textBox1.Location = new System.Drawing.Point(0, 402);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(456, 20);
+            this.textBox1.Size = new System.Drawing.Size(736, 20);
             this.textBox1.TabIndex = 2;
             // 
             // Form1
