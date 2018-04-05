@@ -8,19 +8,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Timers;
 
 namespace Fractal
 {
     public partial class Form1 : Form
     {
         private bool isFirstRun = true;
-
-        //private int MAX = 256;      // max iterations
-        //private double SX = 0; // start value real
-        //private double SY = 0; // start value imaginary
-        //private double EX = 0;    // end value real
-        //private double EY = 0;
-
         private int MAX = 256;      // max iterations
         private double SX = -2.025; // start value real
         private double SY = -1.125; // start value imaginary
@@ -36,6 +30,10 @@ namespace Fractal
         private Pen pen;
         private bool isClicked;
         private static bool action, rectangle, finished;
+       // int val;
+
+    
+
 
         public Form1()
         {
@@ -54,6 +52,7 @@ namespace Fractal
             g1 = Graphics.FromImage(picture);
             finished = true;
             isClicked = false;
+           // val = 0;
         }
 
         public void start()
@@ -71,11 +70,11 @@ namespace Fractal
         {
             Graphics obj = e.Graphics;
             obj.DrawImage(picture, new Point(0, 0));
-            Console.WriteLine("Works");
+            
         }
        
 
-        private void mandelbrot() // calculate all points
+        private void mandelbrot(int num = 0) // calculate all points
         {
             int x, y;
             float h, b, alt = 0.0f;
@@ -96,7 +95,7 @@ namespace Fractal
                         b = 1.0f - h * h; // brightnes
                                           ///djm added
 
-                        HSBcol.fromHSB(h * 255, 0.8f * 255, b * 255); //convert hsb to rgb then make a Java Color
+                        HSBcol.fromHSB(h * 255, 0.8f * 255, b * 255, num); //convert hsb to rgb then make a Java Color
                         Color col = Color.FromArgb((int)HSBcol.rChan, (int)HSBcol.gChan, (int)HSBcol.bChan);
                         pen = new Pen(col);
 
@@ -109,7 +108,8 @@ namespace Fractal
             }
             //Displaying message after mandlebrot is ready
             Cursor.Current = Cursors.Cross;
-           textBox1.Text = "Mandelbrot-Set ready - please select zoom area with pressed mouse.";
+           textBox1.Text = "Mandelbrot-Set ready - please select and zoom with pressed mouse." +
+                " Different options are available on 'Menu'";
             textBox1.Enabled = false;
 
             action = true;
@@ -170,7 +170,8 @@ namespace Fractal
             }
             else
             {
-                Console.WriteLine("DOesn't work!");
+                
+
                 xstart = SX;
                 ystart = SY;
                 xende = EX;
@@ -195,22 +196,30 @@ namespace Fractal
         }
         public void update()
         {
-            Graphics g = pictureBox1.CreateGraphics();
-            g.DrawImage(picture, 0, 0);
-            if (rectangle)
+            try
             {
+                Graphics g = pictureBox1.CreateGraphics();
+                g.DrawImage(picture, 0, 0);
+                if (rectangle)
+                {
 
-                Pen mypen = new Pen(Color.White, 1);
-                if (xs < xe)
-                {
-                    if (ys < ye) g.DrawRectangle(mypen, xs, ys, (xe - xs), (ye - ys));
-                    else g.DrawRectangle(mypen, xs, ye, (xe - xs), (ys - ye));
+                    Pen mypen = new Pen(Color.White, 1);
+                    if (xs < xe)
+                    {
+                        if (ys < ye) g.DrawRectangle(mypen, xs, ys, (xe - xs), (ye - ys));
+                        else g.DrawRectangle(mypen, xs, ye, (xe - xs), (ys - ye));
+                    }
+                    else
+                    {
+                        if (ys < ye) g.DrawRectangle(mypen, xe, ys, (xs - xe), (ye - ys));
+                        else g.DrawRectangle(mypen, xe, ye, (xs - xe), (ys - ye));
+                    }
                 }
-                else
-                {
-                    if (ys < ye) g.DrawRectangle(mypen, xe, ys, (xs - xe), (ye - ys));
-                    else g.DrawRectangle(mypen, xe, ye, (xs - xe), (ys - ye));
-                }
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
             private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -236,7 +245,33 @@ namespace Fractal
             }
         }
 
-            private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        private void startColorCyclingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer1.Start();
+        }
+
+        private void stopToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+        }
+
+        private int timerInt = 1;
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+            timerInt++;
+
+            if (timerInt >= 8)
+            {
+                timerInt = 1;
+            }
+            else
+            {
+                mandelbrot(timerInt);
+                update();
+            }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
             {
             int z, w;
             if (action)
@@ -275,8 +310,6 @@ namespace Fractal
                 rectangle = false;
                 isClicked = false;
                 update();
-               
-               
             }
 
             try
@@ -293,9 +326,79 @@ namespace Fractal
             {
                 Console.Write("Exception" + ex);
             }
+        }
+        public void getInfo()
+        {
+            MessageBox.Show("Mandelbrot By:" + Environment.NewLine +
+                "Deepesh K.C." + Environment.NewLine +
+                "The British College" + Environment.NewLine +
+                "Email: deepeshkc@live.com" + Environment.NewLine +
+                "Contact No: +9779843202087" + Environment.NewLine,
+                "About"
+                );
+        }
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            e.Graphics.DrawImage(pictureBox1.Image, 0, 0);
+        }
 
+        
+
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            start();
+            mandelbrot();
+            update();
+         
 
         }
+
+        private void cloneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form1 clone = new Form1();
+            clone.Show();
+            isFirstRun = false;
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog f = new SaveFileDialog();
+            f.Filter = "JPG(*.JPG) | *.JPG";
+            if (f.ShowDialog() == DialogResult.OK)
+            {
+                picture.Save(f.FileName);
+            }
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            {
+                DialogResult dialogResult = MessageBox.Show("Do You want to exit ?", "Exit", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    this.Close();
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+
+                }
+            }
+        }
+
+        private void changeColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Random rd = new Random();
+
+            mandelbrot(rd.Next(1, 7));
+            update();
+           
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            getInfo();
+        }
+
     }
         }
 
