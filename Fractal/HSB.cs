@@ -71,14 +71,12 @@ namespace Fractal
                     blue = 0;
                 }
             }
-            //if (val == 0)
             
                 rChan = (float)Math.Round(Math.Min(Math.Max(red, 0f), 255));
                 gChan = (float)Math.Round(Math.Min(Math.Max(green, 0), 255));
                 bChan = (float)Math.Round(Math.Min(Math.Max(blue, 0), 255));
-            
-            //else if(val==1)
-            
+
+            //for the color palette, different color values are given
                 if (num == 1)
                 {
 

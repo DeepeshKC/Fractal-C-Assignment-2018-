@@ -52,8 +52,7 @@ namespace Fractal
             g1 = Graphics.FromImage(picture);
             finished = true;
             isClicked = false;
-           // val = 0;
-        }
+          }
 
         public void start()
         {
@@ -62,7 +61,7 @@ namespace Fractal
             initvalues();
             xzoom = (xende - xstart) / (double)x1;
             yzoom = (yende - ystart) / (double)y1;
-            mandelbrot();
+            mandelbrot(ColorStateReader());
 
 
         }
@@ -136,7 +135,7 @@ namespace Fractal
 
             List<double> l = null;
             if (isFirstRun)
-            {
+            {//to read values of mandlebrot form 'values.txt'
                 try
                 {
                     StreamReader sr = new StreamReader("values.txt");
@@ -170,8 +169,7 @@ namespace Fractal
             }
             else
             {
-                
-
+              //to get default mandlebrot values
                 xstart = SX;
                 ystart = SY;
                 xende = EX;
@@ -232,42 +230,17 @@ namespace Fractal
             }
         }
 
-            private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isClicked)
             {
-            if (isClicked) {
                 if (action)
                 {
                     xe = e.X;
                     ye = e.Y;
                     rectangle = true;
                     update();
-                }  
-            }
-        }
-
-        private void startColorCyclingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            timer1.Start();
-        }
-
-        private void stopToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            timer1.Stop();
-        }
-
-        private int timerInt = 1;
-        private void timer1_Tick_1(object sender, EventArgs e)
-        {
-            timerInt++;
-
-            if (timerInt >= 8)
-            {
-                timerInt = 1;
-            }
-            else
-            {
-                mandelbrot(timerInt);
-                update();
+                }
             }
         }
 
@@ -305,13 +278,13 @@ namespace Fractal
                 xzoom = (xende - xstart) / (double)x1;
                 yzoom = (yende - ystart) / (double)y1;
 
-                mandelbrot();
+                mandelbrot(ColorStateReader());
                 
                 rectangle = false;
                 isClicked = false;
                 update();
             }
-
+            // to save mandlebrot values in 'values.txt' 
             try
             {
                 StreamWriter sx = new StreamWriter("values.txt");
@@ -327,29 +300,53 @@ namespace Fractal
                 Console.Write("Exception" + ex);
             }
         }
+        private void startColorCyclingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timer1.Start();
+        }
+
+        private void stopToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+        }
+
+        //to start color cycling, timer is used
+        private int timerInt = 1;
+        private void timer1_Tick_1(object sender, EventArgs e)
+        {
+            timerInt++;
+
+            if (timerInt >= 8)
+            {
+                timerInt = 1;
+            }
+            else
+            {
+                mandelbrot(timerInt);
+                update();
+            }
+        }
+
+        //to get info 
         public void getInfo()
         {
-            MessageBox.Show("Mandelbrot By:" + Environment.NewLine +
+            MessageBox.Show("Fractal \nVersion: 1.0.0 Freeware" + Environment.NewLine +
+                "Mandelbrot By:" + Environment.NewLine +
                 "Deepesh K.C." + Environment.NewLine +
                 "The British College" + Environment.NewLine +
                 "Email: deepeshkc@live.com" + Environment.NewLine +
-                "Contact No: +9779843202087" + Environment.NewLine,
+                "Contact No: +9779843202087" + Environment.NewLine+
+                 "Developed in: Microsoft Visual Studio 2017 " + Environment.NewLine,
                 "About"
                 );
         }
-        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
-        {
-            e.Graphics.DrawImage(pictureBox1.Image, 0, 0);
-        }
-
         
-
         private void restartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             start();
             mandelbrot();
+            writeColorState(0);
             update();
-         
 
         }
 
@@ -388,8 +385,9 @@ namespace Fractal
         private void changeColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Random rd = new Random();
-
-            mandelbrot(rd.Next(1, 7));
+            int num=(rd.Next(1, 7));
+            writeColorState(num);
+            mandelbrot(num);
             update();
            
         }
@@ -397,6 +395,32 @@ namespace Fractal
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             getInfo();
+        }
+
+        //to save the state of the madlebrot with chosen color
+        private int ColorStateReader()
+        {
+            int temp = 0;
+
+            using (StreamReader st = File.OpenText("colorstate.txt"))
+            {
+                int s = 0;
+                while ((s = Convert.ToInt32(st.ReadLine())) != 0)
+                {
+                    temp = s;
+                }
+            }
+
+            return temp;
+        }
+
+        private void writeColorState(int num)
+        {
+            string path = Directory.GetCurrentDirectory() + "\\colorstate.txt";
+            using (StreamWriter sw = File.CreateText(path))
+            {
+                sw.WriteLine(num);
+            }
         }
 
     }
