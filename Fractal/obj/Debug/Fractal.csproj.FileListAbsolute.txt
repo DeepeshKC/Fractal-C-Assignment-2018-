@@ -1,7 +1,6 @@
 F:\Study\The British College\C#\Assignment\Fractal\Fractal\bin\Debug\Fractal.exe.config
 F:\Study\The British College\C#\Assignment\Fractal\Fractal\bin\Debug\Fractal.exe
 F:\Study\The British College\C#\Assignment\Fractal\Fractal\bin\Debug\Fractal.pdb
-F:\Study\The British College\C#\Assignment\Fractal\Fractal\obj\Debug\Fractal.csprojResolveAssemblyReference.cache
 F:\Study\The British College\C#\Assignment\Fractal\Fractal\obj\Debug\Fractal.Form1.resources
 F:\Study\The British College\C#\Assignment\Fractal\Fractal\obj\Debug\Fractal.Properties.Resources.resources
 F:\Study\The British College\C#\Assignment\Fractal\Fractal\obj\Debug\Fractal.csproj.GenerateResource.Cache

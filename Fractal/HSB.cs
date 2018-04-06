@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Fractal
 {
 
-    internal class HSB
+class HSB
     {
 
         public float rChan, gChan, bChan;
@@ -77,38 +77,42 @@ namespace Fractal
                 bChan = (float)Math.Round(Math.Min(Math.Max(blue, 0), 255));
 
             //for the color palette, different color values are given
-                if (num == 1)
+
+             if (num == 1)
+            {
+                rChan = 45;
+                bChan = 200;
+            }
+            if (num == 2)
                 {
 
                     rChan = 12;
                 }
-                else if (num == 2)
+            else if (num == 3)
+            {
+                bChan = 190;
+                
+            }
+            else if (num == 4)
                 {
-                    bChan = 150;
+                    rChan = 160;
 
-                }
-                else if (num == 3)
-                {
-                    rChan = 80;
-                }
-                else if (num == 4)
-                {
-                    bChan = 40;
-                    rChan = 150;
-                }
-                else if (num == 5)
-                {
-                    rChan = 15;
-                    bChan = 200;
-                }
-                else if (num == 6)
-                {
-                    rChan = 255;
-                    bChan = 200;
-                }
+            }
+            else if (num == 5)
+            {
+                rChan = 255;
+                bChan = 200;
+            }
+
+            else if (num == 6)
+            {
+                rChan = 250;
+            }
+
                 else if (num == 7)
                 {
-                    rChan = 200;
+                    rChan = 2;
+                    bChan = 145; 
                 }
             }
         }
